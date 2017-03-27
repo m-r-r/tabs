@@ -1,0 +1,17 @@
+{
+  "name": "tabs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Mickaël RAYBAUD-ROIG <raybaudroigm@gmail.com> (http://ctrlaltbksp.eu/)",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^15.4.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.4.1",
+    "flow-bin": "^0.42.0",
+    "style-loader": "^0.16.0",
+    "webpack": "^2.3.2"
+  }
+}
