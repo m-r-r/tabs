@@ -11,19 +11,14 @@ export type Note = {
   accidental?: Accidental,
 };
 
-export type NamingSystem = 'english' | 'doremi';
+export type TrackData = {
+  start: number,
+  string: number,
+  fret?: number,
+  text?: string,
+};
 
-export type TrackData
-  = { start: number
-    , string: number
-    , fret: number
-    } 
-  | { start: number
-    , string: number
-    , text: string
-    };
-
-export type Tuning = {[string: number]: ?Note};
+export type Tuning = Array<Note>;
 
 export type Track = {
   tuning: Tuning,
@@ -33,14 +28,6 @@ export type Track = {
 
 export type TextBlock = string;
 
-export type Timestamp = number;
-
-export type Tabulature = {
-  title: ?string,
-  author: ?string,
-  created: ?Timestamp,
-  modified: ?Timestamp,
-  parts: Array<TextBlock | Track>,
-};
+export type Tabulature = Array<TextBlock | Track>;
 
 export type NotesNames = {[key: NoteValue]: string};

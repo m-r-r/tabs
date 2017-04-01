@@ -1,24 +1,24 @@
 /* @flow */
-import type { Track, TextBlock, Note, Octave, NoteValue, Accidental } from './types';
-import { ENGLISH_NAMES, LATIN_NAMES, Sharp, Flat, OCTAVE_MIN, OCTAVE_MAX } from './constants';
+import reduce from 'lodash/reduce';
+import { ENGLISH_NAMES, LATIN_NAMES, Flat, OCTAVE_MAX, OCTAVE_MIN, Sharp } from './constants';
 import { newTrack } from './core';
+import type { Accidental, Note, NoteValue, Octave, Tabulature } from './types';
 
-const TABS_RE = /^\s*\|?\s*((Do|R[eé]|Mi|Fa|Sol|La|Si|A|B|C|D|E|F|G)m?)?\s*\|?\s*([\d\-hb~p\/\\]+)*\|?\s*$/i;
+const TABS_RE = /^\s*\|?\s*((Do|R[eéè]|Mi|Fa|Sol|La|Si|A|B|C|D|E|F|G)m?)?\s*\|?\s*([\d\-hb~p\/\\]+)*\|?\s*$/i;
 
-const notesNames = {
-  ...flipObject(ENGLISH_NAMES),
-  ...flipObject(LATIN_NAMES),
-};
+const notesNames = {};
+reduce(ENGLISH_NAMES, valuesByName, notesNames);
+reduce(LATIN_NAMES, valuesByName, notesNames);
 
-function parseNoteValue(text: string): ?NoteValue {
-  text = text.toLowerCase().replace('é', 'e');
+function parseNoteValue (text: string): ?NoteValue {
+  text = text.toLowerCase().replace(/[éè]/gi, 'e');
   if (notesNames.hasOwnProperty(text)) {
     return notesNames[text];
   }
   return null;
 }
 
-function parseOctave(text: string): ?Octave {
+function parseOctave (text: string): ?Octave {
   let num: number = parseInt(text);
   if (Number.isNaN(num) || num < OCTAVE_MIN || num > OCTAVE_MAX) {
     return null;
@@ -26,7 +26,7 @@ function parseOctave(text: string): ?Octave {
   return (num: any);
 }
 
-function parseAccidental(text: string): ?Accidental {
+function parseAccidental (text: string): ?Accidental {
   text = String(text).toLowerCase();
   if ('♯#'.indexOf(text) > -1) {
     return Sharp;
@@ -37,11 +37,11 @@ function parseAccidental(text: string): ?Accidental {
   }
 }
 
-export function parseNote(text: string): ?Note {
+export function parseNote (text: string): ?Note {
   if (typeof text !== 'string') {
     throw new TypeError('Argument #1 must be a string');
   }
-  var matches = text.match(/^(do|r[ée]|mi|fa|sol|la|si|[a-g])(\d+)?([♯♭b#])?(\d+)?$/i);
+  const matches = text.match(/^(do|r[ée]|mi|fa|sol|la|si|[a-g])(\d+)?([♯♭b#])?(\d+)?$/i);
   if (matches) {
     let value = parseNoteValue(matches[1]);
     if (value) {
@@ -51,7 +51,7 @@ export function parseNote(text: string): ?Note {
         note.octave = octave;
       }
       let accidental = parseAccidental(matches[3]);
-      if (accidental !== null)  {
+      if (accidental !== null) {
         note.accidental = accidental;
       }
       return note;
@@ -60,7 +60,7 @@ export function parseNote(text: string): ?Note {
   return null;
 }
 
-export function fromString(text: string): Array<TextBlock | Track> {
+export function fromString (text: string): Tabulature {
   let lines = text.split(/\n/);
   let parts = [];
   let previousTrack = newTrack();
@@ -84,9 +84,9 @@ export function fromString(text: string): Array<TextBlock | Track> {
 
       if (!currentTrack) {
         currentTrack = {
-            tuning: {...previousTrack.tuning},
-            data: [],
-            stringCount: 0,
+          tuning: [...previousTrack.tuning],
+          data: [],
+          stringCount: 0,
         };
         parts.push(currentTrack);
       }
@@ -106,12 +106,12 @@ export function fromString(text: string): Array<TextBlock | Track> {
         if (Number.isNaN(fret)) {
           trackData.push({start: pos, string: currentString, text});
         } else {
-            trackData.push({start: pos, string: currentString, fret});
+          trackData.push({start: pos, string: currentString, fret});
         }
-        pos ++;
+        pos++;
       }
       currentTrack.stringCount++;
-      currentString ++;
+      currentString++;
     } else {
       if (currentTrack !== null) {
         previousTrack = currentTrack;
@@ -125,15 +125,12 @@ export function fromString(text: string): Array<TextBlock | Track> {
 }
 
 
-function notEmptyString(s: any): boolean {
+function notEmptyString (s: any): boolean {
   return typeof s === 'string' && s.length > 0;
 }
 
-function flipObject<K, V>(object: {[key: K]: V}): {[key: V]: K} {
-  let keys: K[] = (Object.keys(object) : any);
-  return keys.reduce((acc, k) => {
-    acc[object[k]] = k;
-    return acc;
-  }, ({}: {[key: V]: K}));
+function valuesByName (acc: {[key: string]: number}, value: string, key: string) {
+  acc[value.toLowerCase()] = Number(key);
+  return acc;
 }
 

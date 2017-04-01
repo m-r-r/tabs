@@ -1,6 +1,6 @@
 /* @flow */
 
-import type {Note, TextBlock, Track, NotesNames} from './types';
+import type {Note, TextBlock, Track, NotesNames, Tabulature} from './types';
 import {ENGLISH_NAMES, Flat, LATIN_NAMES, Sharp} from './constants';
 
 function trackLength(track: Track): number {
@@ -55,7 +55,7 @@ function formatNote(note: Note, notesNames: NotesNames = ENGLISH_NAMES) {
     return text;
 }
 
-export function toString(parts: Array<TextBlock | Track>, notesNames: NotesNames = ENGLISH_NAMES): string {
+export function toString(parts: Tabulature, notesNames: NotesNames = ENGLISH_NAMES): string {
     return parts.map(part => {
         if (typeof part === 'string') {
             return part;

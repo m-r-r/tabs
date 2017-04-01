@@ -1,5 +1,5 @@
 /* @flow */
-import type { NoteValue, NotesNames, Accidental, Tuning } from './types';
+import type { Accidental, NotesNames, NoteValue, Tuning } from './types';
 
 export const Do: NoteValue = 0;
 export const Re: NoteValue = 2;
@@ -35,23 +35,49 @@ export const LATIN_NAMES: NotesNames = {
 export const OCTAVE_MIN = -1;
 export const OCTAVE_MAX = 10;
 
-export const DEFAULT_TUNINGS: {[key: string]: Tuning} = {
-  'ukulele': {
-    [0]: {
-      octave: 4,
+export const DEFAULT_TUNINGS: { [key: string]: Tuning } = {
+  'ukulele': [
+    {
       value: La,
-    },
-    [1]: {
       octave: 4,
+    },
+    {
       value: Mi,
-    },
-    [2]: {
       octave: 4,
+    },
+    {
       value: Do,
-    },
-    [3]: {
       octave: 4,
+    },
+    {
       value: Sol,
-    }
-  }
+      octave: 4,
+    },
+  ],
+  'guitar': [
+    {
+      value: Mi,
+      octave: 4,
+    },
+    {
+      value: La,
+      octave: 2,
+    },
+    {
+      value: Re,
+      octave: 3,
+    },
+    {
+      value: Sol,
+      octave: 3,
+    },
+    {
+      value: Si,
+      octave: 3,
+    },
+    {
+      value: Mi,
+      octave: 4,
+    },
+  ],
 };

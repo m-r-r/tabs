@@ -5,7 +5,8 @@
   "author": "Mickaël RAYBAUD-ROIG <raybaudroigm@gmail.com> (http://ctrlaltbksp.eu/)",
   "license": "MIT",
   "dependencies": {
-    "csjs": "^1.1.0",
+    "csjs-inject": "^1.0.1",
+    "lodash.reduce": "^4.6.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2"
   },
@@ -22,5 +23,9 @@
     "style-loader": "^0.16.0",
     "webpack": "^2.3.2",
     "webpack-dev-server": "^2.4.2"
+  },
+  "scripts": {
+    "start": "webpack-dev-server -d",
+    "build": "NODE_ENVIRONENT=\"production\" webpack -p"
   }
 }

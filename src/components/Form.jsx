@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import csjs from 'csjs';
+import csjs from 'csjs-inject';
 
 const styles = csjs`
 .form {
   display: flex;
   flex-flow: column;
+}
+
+.form textarea {
+  min-height: 10em;
 }
 
 .buttons {
