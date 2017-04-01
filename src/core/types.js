@@ -1,17 +1,17 @@
 /** @flow */
 export type Octave = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
-export type NoteName = "do" | "re" | "mi" | "fa" | "sol" | "la" | "si";
+export type NoteValue = 0 | 2 | 4 | 5 | 7 | 9 | 11;
 
-export type Accidental = "sharp" | "flat";
+export type Accidental = 1 | -1;
 
 export type Note = {
-  octave: ?Octave,
-  name: NoteName,
-  accidental: ?Accidental,
+  octave?: Octave,
+  value: NoteValue,
+  accidental?: Accidental,
 };
 
-export type NamingSystem = "english" | "doremi";
+export type NamingSystem = 'english' | 'doremi';
 
 export type TrackData
   = { start: number
@@ -42,3 +42,5 @@ export type Tabulature = {
   modified: ?Timestamp,
   parts: Array<TextBlock | Track>,
 };
+
+export type NotesNames = {[key: NoteValue]: string};

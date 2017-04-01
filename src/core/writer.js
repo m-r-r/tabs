@@ -1,7 +1,7 @@
 /* @flow */
 
-import {Note, TextBlock, Track} from "./types";
-import {ENGLISH_NAMES, Flat, LATIN_NAMES, Sharp} from "./constants";
+import type {Note, TextBlock, Track, NotesNames} from './types';
+import {ENGLISH_NAMES, Flat, LATIN_NAMES, Sharp} from './constants';
 
 function trackLength(track: Track): number {
     let length = 0;
@@ -11,7 +11,7 @@ function trackLength(track: Track): number {
     return length;
 }
 
-function formatTrack(track: Track, notesNames = ENGLISH_NAMES): string {
+function formatTrack(track: Track, notesNames: NotesNames = ENGLISH_NAMES): string {
     let output: string[] = [];
 
     {
@@ -38,9 +38,9 @@ function formatTrack(track: Track, notesNames = ENGLISH_NAMES): string {
     return output.join('\n');
 }
 
-function formatNote(note: Note, notesNames = ENGLISH_NAMES) {
+function formatNote(note: Note, notesNames: NotesNames = ENGLISH_NAMES) {
     let text = '';
-    text += notesNames[note.name];
+    text += notesNames[note.value];
     if (notesNames === LATIN_NAMES) {
         text = ('   ' + text).slice(-3);
     }
@@ -55,7 +55,7 @@ function formatNote(note: Note, notesNames = ENGLISH_NAMES) {
     return text;
 }
 
-export function toString(parts: Array<TextBlock | Track>, notesNames = ENGLISH_NAMES): string {
+export function toString(parts: Array<TextBlock | Track>, notesNames: NotesNames = ENGLISH_NAMES): string {
     return parts.map(part => {
         if (typeof part === 'string') {
             return part;

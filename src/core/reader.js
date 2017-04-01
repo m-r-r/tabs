@@ -1,5 +1,5 @@
 /* @flow */
-import { Track, TextBlock, Note, Octave, NoteName, Accidental } from './types';
+import type { Track, TextBlock, Note, Octave, NoteValue, Accidental } from './types';
 import { ENGLISH_NAMES, LATIN_NAMES, Sharp, Flat, OCTAVE_MIN, OCTAVE_MAX } from './constants';
 import { newTrack } from './core';
 
@@ -10,7 +10,7 @@ const notesNames = {
   ...flipObject(LATIN_NAMES),
 };
 
-function parseNoteName(text: string): ?NoteName {
+function parseNoteValue(text: string): ?NoteValue {
   text = text.toLowerCase().replace('é', 'e');
   if (notesNames.hasOwnProperty(text)) {
     return notesNames[text];
@@ -39,19 +39,22 @@ function parseAccidental(text: string): ?Accidental {
 
 export function parseNote(text: string): ?Note {
   if (typeof text !== 'string') {
-    throw new TypeError("Argument #1 must be a string");
+    throw new TypeError('Argument #1 must be a string');
   }
   var matches = text.match(/^(do|r[ée]|mi|fa|sol|la|si|[a-g])(\d+)?([♯♭b#])?(\d+)?$/i);
   if (matches) {
-    let name = parseNoteName(matches[1]);
-    if (name) {
+    let value = parseNoteValue(matches[1]);
+    if (value) {
+      const note: Note = {value};
       let octave = parseOctave(matches[2] || matches[4]);
+      if (octave !== null) {
+        note.octave = octave;
+      }
       let accidental = parseAccidental(matches[3]);
-      return {
-        octave,
-        name,
-        accidental,
-      };
+      if (accidental !== null)  {
+        note.accidental = accidental;
+      }
+      return note;
     }
   }
   return null;
@@ -127,9 +130,10 @@ function notEmptyString(s: any): boolean {
 }
 
 function flipObject<K, V>(object: {[key: K]: V}): {[key: V]: K} {
-  return Object.keys(object).reduce((acc, k) => {
+  let keys: K[] = (Object.keys(object) : any);
+  return keys.reduce((acc, k) => {
     acc[object[k]] = k;
     return acc;
-  }, {});
+  }, ({}: {[key: V]: K}));
 }
 
