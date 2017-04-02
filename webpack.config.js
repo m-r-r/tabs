@@ -9,17 +9,16 @@ const publicDir = path.join(__dirname, 'public');
 const entry = [path.join(srcDir, 'main.js')];
 
 if (!isProd) {
-  entry.unshift('react-dev-utils/webpackHotDevClient');
+  entry.unshift('react-hot-loader/patch');
 }
 
 const babelOptions = {
   cacheDirectory: !isProd,
-  plugins: isProd ? [] : 'react-hot-loader/babel',
 };
 
 const config = {
     bail: isProd,
-    devtool: isProd ? 'source-map' : 'cheap-module-source-map',
+    devtool: isProd ? false : 'cheap-module-source-map',
 
     entry: entry,
 
@@ -37,8 +36,10 @@ const config = {
         {
           test: /\.jsx?$/,
           include: srcDir,
-          loader: 'babel-loader',
-          options: babelOptions,
+          use: [
+            isProd ? null : 'react-hot-loader/webpack', 
+            'babel-loader?' + JSON.stringify(babelOptions),
+          ].filter(v => v !== null)
         }
       ],
     },
@@ -51,7 +52,34 @@ const config = {
       new webpack.DefinePlugin({
         "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
       }),
-    ],
+      isProd && new webpack.optimize.UglifyJsPlugin({
+        comments: false, // remove comments
+        compress: {
+          properties: true,
+          dead_code: true,
+          drop_debugger: true,
+          unsafe: true,
+          conditionals: true,
+          comparisons: true,
+          booleans: true,
+          evaluate: true,
+          loops: true,
+          unused: true,
+          if_return: true,
+          join_vars: true,
+          cascade: true,
+          collapse_vars: true,
+          reduce_vars: true,
+          warnings: false,
+          pure_getters: true,
+          drop_console: true,
+          keep_fargs: false,
+          keep_fnames: false,
+          passes: 3,
+        },
+        sourceMaps: false,
+      })
+    ].filter(p => !!p),
 };
 
 if (!isProd) {
@@ -59,6 +87,7 @@ if (!isProd) {
     contentBase: publicDir,
     watchContentBase: true,
     hot: true,
+    inline: true,
     quiet: true,
     watchOptions: {
       ignored: /node_modules/,

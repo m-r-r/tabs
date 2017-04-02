@@ -7,7 +7,7 @@ import { changeTuning, DEFAULT_TUNINGS, fromString, toString } from '../core';
 import type { Tabulature } from '../core/types';
 
 export default class App extends Component {
-  _handleFormSubmit: Function;
+  handleFormSubmit: Function;
 
   state: {
     source: string,
@@ -19,22 +19,23 @@ export default class App extends Component {
     this.state = {
       source: '',
     };
-    this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
 
   render () {
     const {output} = this.state;
     return (
       <div>
-        <Form onSubmit={this._handleFormSubmit}/>
+        <Form onSubmit={this.handleFormSubmit} />
         { output !== null && <pre>{output}</pre>}
       </div>
     );
   }
 
-  _handleFormSubmit ({source, from, to}: HTMLFormElement & Object) {
-    let inputTuning = from ? DEFAULT_TUNINGS[from] : null;
-    let outputTuning = DEFAULT_TUNINGS[to];
+  handleFormSubmit ({source, inputTuning, outputTuning}: Object) {
+    inputTuning = inputTuning ? DEFAULT_TUNINGS[inputTuning] : null;
+    console.debug(outputTuning);
+    outputTuning = DEFAULT_TUNINGS[outputTuning];
     let tabulature = fromString(source, inputTuning);
     let converted = changeTuning(tabulature, outputTuning);
     this.setState({

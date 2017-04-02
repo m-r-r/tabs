@@ -6,8 +6,8 @@ export type NoteValue = 0 | 2 | 4 | 5 | 7 | 9 | 11;
 export type Accidental = 1 | -1;
 
 export type Note = {
-  octave?: Octave,
   value: NoteValue,
+  octave: Octave,
   accidental?: Accidental,
 };
 
@@ -24,7 +24,23 @@ export type Track = {
   tuning: Tuning,
   data: TrackData[],
   stringCount: number,
+  width: number,
 };
+
+export type PartialNote = {
+  value: NoteValue,
+  octave?: Octave,
+  accidental?: Accidental,
+};
+
+export type PartialTuning = ParitialNote[];
+
+export type PartialTrack = {
+  tuning: PartialTuning[],
+  data: TrackData[],
+  stringCount: number,
+  width: number,
+}
 
 export type TextBlock = string;
 

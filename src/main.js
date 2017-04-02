@@ -3,7 +3,22 @@ import { createElement } from 'react';
 
 import App from './containers/App';
 
-render(
-  createElement(App, {}),
-  document.getElementById('main')
-);
+(() => {
+  let RootComponent = App;
+  
+  function main() {
+    render(
+      createElement(RootComponent, {}),
+      document.getElementById('main')
+    );
+  }
+  
+  if (module.hot) {
+    module.hot.accept('./containers/App', () => {
+      RootComponent = require('./containers/App').default;
+      main();
+    });
+  }
+  
+  main();
+})();

@@ -2,7 +2,15 @@
 import reduce from 'lodash/reduce';
 import { ENGLISH_NAMES, LATIN_NAMES, Flat, OCTAVE_MAX, OCTAVE_MIN, Sharp } from './constants';
 import { newTrack } from './core';
-import type { Accidental, Note, NoteValue, Octave, Tabulature } from './types';
+import type {
+  Accidental, 
+  Note,
+  NoteValue,
+  PartialNote,
+  PartialTrack,
+  Octave, 
+  Tabulature,
+} from './types';
 
 const TABS_RE = /^\s*\|?\s*((Do|R[eéè]|Mi|Fa|Sol|La|Si|A|B|C|D|E|F|G)m?)?\s*\|?\s*([\d\-hb~p\/\\]+)*\|?\s*$/i;
 
@@ -37,7 +45,7 @@ function parseAccidental (text: string): ?Accidental {
   }
 }
 
-export function parseNote (text: string): ?Note {
+export function parseNote (text: string): ?PartialNote {
   if (typeof text !== 'string') {
     throw new TypeError('Argument #1 must be a string');
   }
@@ -60,7 +68,7 @@ export function parseNote (text: string): ?Note {
   return null;
 }
 
-export function fromString (text: string): Tabulature {
+export function fromString (text: string, selectedTuning?: Tuning): Tabulature {
   let lines = text.split(/\n/);
   let parts = [];
   let previousTrack = newTrack();
@@ -84,7 +92,7 @@ export function fromString (text: string): Tabulature {
 
       if (!currentTrack) {
         currentTrack = {
-          tuning: [...previousTrack.tuning],
+          tuning: [],
           data: [],
           stringCount: 0,
         };
@@ -134,3 +142,110 @@ function valuesByName (acc: {[key: string]: number}, value: string, key: string)
   return acc;
 }
 
+/*
+
+const TRACK_STRING_RE = '';
+
+
+class Reader {
+  construct () {
+    this.parts = [];
+    this.line = 0;
+    this.matches = null;
+    this.errors = [];
+    this.partialTrack = null;
+    this.textBlock = null;
+  }
+  
+  read (text: string) {
+    const lines = text.split('\n');
+    let inTrack = false;
+    
+    for (let line of lines) {
+      this.matches = line.match(TRACK_STRING_RE);
+      this.line ++;
+      
+      if (this.matches) {
+        if (inTrack) {
+          
+        } else {
+          
+        }
+        this.onMatchTrackLine(matches);
+      }
+      
+      if (inTrack) {
+        if (!this.matches) {
+          this.onTrackEnd();
+          this.onTextBegin();
+          this.textBlock += line;
+        } else {
+          this.onMatchTrackLine(matches);
+        }
+      } else {
+        if (this.matches) {
+          if (this.textBlock !== null) {
+            this.onTextEnd();
+          }
+          this.onTrackBegin();
+          this.onMatchTrackLine(matches);
+        }
+      }
+    }
+  }
+  
+  onTextBegin () {
+    this.textBlock = '';
+  }
+  
+  onTextEnd () {
+    this.parts.push(this.textBlock);
+    this.textBlock = null;
+  }
+  
+  onTrackBegin () {
+    this.track = {
+      tuning: [],
+      data: [],
+      source: '',
+      stringCount: 0,
+      width: 0,
+      startLine: this.line,
+      endLine: null,
+    };
+  }
+  
+  onTrackEnd () {
+    const {partialTrack} = this.partialTrack;
+    let partialTuning =  partialTrack.tuning;
+    let trackTuning = null;
+    if (isEmptyTuning(trackTuning)) {
+      if (this.previousTrack && partialTrack.stringCount === this.previousTrack.stringCount) {
+        trackTuning = [...this.previousTrack.tuning];
+      }
+    } else {
+      trackTuning = findTuning(trackTuning);
+    }
+    
+    if (trackTuning === null) {
+      this.parts.push(this.track.source);
+      this.errors.push({
+        startLine: partialTrack.startLine,
+        endLine: partialTrack.endLine,
+        code: Reader.MISSING_TUNING,
+      });
+    } else {
+      const track = {
+        tuning: trackTuning,
+        data: partialTrack.data,
+        stringCount: partialTrack.stringCount,
+        width: partialTrack.width,
+      };
+      this.parts.push(track);
+    }
+    this.partialTrack = null;
+  }
+}
+
+Reader.MISSING_TUNING = 'MISSING_TUNING';
+*/

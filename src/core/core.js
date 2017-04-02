@@ -2,10 +2,38 @@
 import type {
   Track,
   Tuning,
-  Note, TrackData, Tabulature,
+  PartialTuning,
+  Note,
+  ParitialNote,
+  TrackData, 
+  Tabulature,
 } from './types';
 
 import { Flat, Sharp } from './constants';
+
+function findTuning (partialTuning: PartialTuning[], selectedTuning?: Tuning): ?Tuning {
+  if (selectedTuning) {
+    if (partialTuning.length === selectedTuning.length) {
+      return selectedTuning;
+    } else {
+      return null;
+    }
+  }
+  let validNotes = partielTuning.filter((partialNote) => typeof partialNote.octave === 'number');
+  if (validNotes.length === partialNotes.length) {
+    return (validNotes : any);
+  }
+  
+  let hash = tuningHash(partielTuning);
+  let tuningId = Object.keys(DEFAULT_TUNINGS).find((key) => {
+    return hash === tuningHash(DEFAULT_TUNINGS[key]);
+  });
+  return DEFAULT_TUNINGS[tuningId] || null;
+}
+
+function tuningHash (tuning: Array<Note | PartielNote>) {
+  return tuning.map((note) => note.value).join(':');
+}
 
 export const newTrack = (tuning: Tuning = []): Track => ({
   tuning,
@@ -24,7 +52,6 @@ export function changeTuning (tab: Tabulature, outputTuning: Tuning): Tabulature
 }
 
 function changeTrackTuning(track: Track, outputTuning: Tuning): Track {
-  debugger;
   const outputTrack = newTrack(outputTuning);
   for (let point of track.data) {
     if (typeof point.fret !== 'number') {
