@@ -3,20 +3,11 @@
 import type {Note, TextBlock, Track, NotesNames, Tabulature} from './types';
 import {ENGLISH_NAMES, Flat, LATIN_NAMES, Sharp} from './constants';
 
-function trackLength(track: Track): number {
-    let length = 0;
-    for (let point of track.data) {
-        length = Math.max(length, point.start + 1);
-    }
-    return length;
-}
-
 function formatTrack(track: Track, notesNames: NotesNames = ENGLISH_NAMES): string {
     let output: string[] = [];
 
     {
-        let maxLength = trackLength(track) + 1;
-        const emptyString = hr(maxLength + 1);
+      const emptyString = hr(track.length + 1);
 
         for (let i = 0; i < track.stringCount; i++) {
             output.push(emptyString.slice());

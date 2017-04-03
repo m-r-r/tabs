@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import csjs from 'csjs-inject';
-
+import HighlightTextarea from './HightlightTextarea';
+import type {Highlight} from './HightlightTextarea';
+import { ReaderError } from '../core/types';
 const styles = csjs`
 .form {
   display: flex;
@@ -19,6 +21,7 @@ const styles = csjs`
 export default class Form extends Component {
   static defaultProps = {
     onSubmit: () => undefined,
+    errors: ReaderError[],
   };
   
   constructor (props, context) {
@@ -33,6 +36,14 @@ export default class Form extends Component {
   componentWillMount () {
     this.setState({savedValues: getSavedValues()});
   }
+
+  get highlights (): Highlight[] {
+    return this.props.errors.map((error, id) => ({
+      id,
+      start: error.start.offset,
+      end: error.start.offset,
+    }));
+  }
   
   render () {
     const {savedValues} = this.state;
@@ -40,6 +51,7 @@ export default class Form extends Component {
       <form ref="form" className={styles.form}
             onSubmit={this.handleSubmit} onChange={this.handleChange}>
         <textarea name="source" value={undefined} defaultValue={savedValues.source} required />
+        <HighlightTextarea highlights={this.highlights} value={savedValues.source} />
         <div className={styles.buttons}>
           <label>From: <SelectTuning name="inputTuning" value={undefined} defaultValue={savedValues.inputTuning} /></label>
           <label>To: <SelectTuning name="outputTuning" required defaultValue={savedValues.outputTuning} /></label>

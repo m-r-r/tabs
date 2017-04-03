@@ -19,6 +19,7 @@
     "babel-preset-stage-2": "^6.22.0",
     "flow-bin": "^0.42.0",
     "html-webpack-plugin": "^2.28.0",
+    "pegjs": "^0.10.0",
     "react-hot-loader": "next",
     "style-loader": "^0.16.0",
     "webpack": "^2.3.2",
@@ -26,6 +27,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server -d",
-    "build": "NODE_ENVIRONENT=\"production\" webpack -p"
+    "build": "NODE_ENVIRONENT=\"production\" webpack -p",
+    "build:parser": "pegjs -O size --format commonjs -o src/core/parser.js < src/core/parser.pegjs"
   }
 }

@@ -4,14 +4,14 @@ import type {
   Tuning,
   PartialTuning,
   Note,
-  ParitialNote,
-  TrackData, 
+  TrackData,
   Tabulature,
+  PartialNote,
 } from './types';
 
-import { Flat, Sharp } from './constants';
+import { DEFAULT_TUNINGS, Flat, Sharp } from './constants';
 
-function findTuning (partialTuning: PartialTuning[], selectedTuning?: Tuning): ?Tuning {
+export function findTuning (partialTuning: PartialTuning, selectedTuning?: Tuning): ?Tuning {
   if (selectedTuning) {
     if (partialTuning.length === selectedTuning.length) {
       return selectedTuning;
@@ -19,26 +19,27 @@ function findTuning (partialTuning: PartialTuning[], selectedTuning?: Tuning): ?
       return null;
     }
   }
-  let validNotes = partielTuning.filter((partialNote) => typeof partialNote.octave === 'number');
-  if (validNotes.length === partialNotes.length) {
+  let validNotes = partialTuning.filter((note: ?PartialNote) => note && typeof note.octave === 'number');
+  if (validNotes.length === partialTuning.length) {
     return (validNotes : any);
   }
   
-  let hash = tuningHash(partielTuning);
-  let tuningId = Object.keys(DEFAULT_TUNINGS).find((key) => {
+  let hash = tuningHash(partialTuning);
+  let tuningId: ?string = Object.keys(DEFAULT_TUNINGS).find((key) => {
     return hash === tuningHash(DEFAULT_TUNINGS[key]);
   });
-  return DEFAULT_TUNINGS[tuningId] || null;
+  return tuningId ? DEFAULT_TUNINGS[tuningId] : null;
 }
 
-function tuningHash (tuning: Array<Note | PartielNote>) {
-  return tuning.map((note) => note.value).join(':');
+function tuningHash (tuning: PartialTuning | Tuning) {
+  return tuning.map((note) => note ? String(note.value) : '').join(':');
 }
 
-export const newTrack = (tuning: Tuning = []): Track => ({
+export const newTrack = (tuning: Tuning = [], length?: number = 0): Track => ({
   tuning,
   data: [],
   stringCount: tuning.length,
+  length,
 });
 
 export function changeTuning (tab: Tabulature, outputTuning: Tuning): Tabulature {
@@ -52,7 +53,7 @@ export function changeTuning (tab: Tabulature, outputTuning: Tuning): Tabulature
 }
 
 function changeTrackTuning(track: Track, outputTuning: Tuning): Track {
-  const outputTrack = newTrack(outputTuning);
+  const outputTrack = newTrack(outputTuning, track.length);
   for (let point of track.data) {
     if (typeof point.fret !== 'number') {
       continue;

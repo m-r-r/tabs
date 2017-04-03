@@ -11,6 +11,14 @@ export type Note = {
   accidental?: Accidental,
 };
 
+export type PartialNote = {
+  value: NoteValue,
+  octave?: Octave,
+  accidental?: Accidental,
+}
+
+export type PartialTuning = PartialNote[];
+
 export type TrackData = {
   start: number,
   string: number,
@@ -24,22 +32,26 @@ export type Track = {
   tuning: Tuning,
   data: TrackData[],
   stringCount: number,
-  width: number,
+  length: number,
 };
 
-export type PartialNote = {
-  value: NoteValue,
-  octave?: Octave,
-  accidental?: Accidental,
+export type ReaderError = {
+  code: string,
+  span: {
+    start: {
+      line: number,
+      column: number,
+    },
+    end: {
+      line: number,
+      column: number,
+    },
+  },
 };
 
-export type PartialTuning = ParitialNote[];
-
-export type PartialTrack = {
-  tuning: PartialTuning[],
-  data: TrackData[],
-  stringCount: number,
-  width: number,
+export type ReaderResult = {
+  tabulature: Tabulature,
+  errors: ReaderError[],
 }
 
 export type TextBlock = string;
@@ -47,3 +59,4 @@ export type TextBlock = string;
 export type Tabulature = Array<TextBlock | Track>;
 
 export type NotesNames = {[key: NoteValue]: string};
+
